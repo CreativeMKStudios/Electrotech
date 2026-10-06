@@ -1,0 +1,57 @@
+---
+import Base from "../layouts/Base.astro";
+import Crumbs from "../components/Crumbs.astro";
+import { projects } from "../data/projects";
+import { company } from "../data/company";
+import { breadcrumbSchema, businessSchema, graph } from "../lib/schema";
+
+const path = "/projects";
+const title = "Jobs customers have described";
+const description =
+  "Electrical jobs named in Electrotech customer comments: kitchen lighting, checks after a leak, Niko home control, and more. Bedford, 01234 325435.";
+const crumbs = [
+  { name: "Home", path: "/" },
+  { name: "Projects", path },
+];
+const jsonLd = graph([
+  businessSchema(Astro.site),
+  breadcrumbSchema(Astro.site, crumbs),
+]);
+---
+
+<Base title={title} description={description} path={path} jsonLd={jsonLd}>
+  <section class="page-hero">
+    <div class="wrap">
+      <Crumbs items={crumbs} />
+      <p class="eyebrow">Projects</p>
+      <h1>Jobs customers have described</h1>
+      <p>
+        These are the jobs people named in comments Electrotech published, plus the work praised in the
+        Google review. We have not added prices, dates, or results that were not in those comments.
+      </p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap">
+      <div class="note" style="margin-bottom:1.2rem">
+        <p>
+          On {company.checkedOn} the Google listing had no work photos. The only picture control opens a
+          street view near {company.street}. That view shows other people’s homes, so it is not copied onto
+          this site. The map on the <a href="/contact">contact page</a> is the listing.
+        </p>
+      </div>
+      <div class="cards">
+        {projects.map((project) => (
+          <article class="card">
+            <div class="card-body">
+              <h2>{project.title}</h2>
+              <p>{project.detail}</p>
+              <p><strong>{project.customer}</strong><br />{project.source}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+      <p style="margin-top:1.2rem"><a href="/reviews">Read the full comments</a></p>
+    </div>
+  </section>
+</Base>

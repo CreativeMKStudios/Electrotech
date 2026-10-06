@@ -1,0 +1,86 @@
+---
+import Base from "../../layouts/Base.astro";
+import Crumbs from "../../components/Crumbs.astro";
+import { getService, services } from "../../data/services";
+import { company } from "../../data/company";
+import { breadcrumbSchema, businessId, businessSchema, faqSchema, graph } from "../../lib/schema";
+
+export function getStaticPaths() {
+  return services.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const path = `/services/${service.slug}`;
+const description = `${service.summary} Electrotech, 5 Miller Road, Bedford. Call ${company.phoneDisplay}.`;
+const crumbs = [
+  { name: "Home", path: "/" },
+  { name: "Services", path: "/services" },
+  { name: service.title, path },
+];
+const others = services.filter((item) => item.slug !== service.slug).slice(0, 3);
+const jsonLd = graph([
+  businessSchema(Astro.site),
+  breadcrumbSchema(Astro.site, crumbs),
+  {
+    "@type": "Service",
+    name: service.title,
+    serviceType: service.title,
+    description: service.lead,
+    url: new URL(path, Astro.site).href,
+    provider: { "@id": businessId(Astro.site) },
+    areaServed: {
+      "@type": "City",
+      name: "Bedford",
+    },
+  },
+  faqSchema(service.faqs),
+]);
+---
+
+<Base title={service.title} description={description} path={path} jsonLd={jsonLd}>
+  <section class="page-hero">
+    <div class="wrap">
+      <Crumbs items={crumbs} />
+      <p class="eyebrow">Services</p>
+      <h1>{service.title}</h1>
+      <p>{service.lead}</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap split-page">
+      <div class="prose">
+        {service.body.map((paragraph) => <p>{paragraph}</p>)}
+        <p>
+          <a class="btn btn-gold" href="/contact">Ask for a quote</a>
+        </p>
+        <div class="faq">
+          <h2>Questions about this work</h2>
+          {service.faqs.map((item) => (
+            <details>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+      <aside class="card">
+        <div class="card-body">
+          <h2>On this list</h2>
+          <ul class="list">
+            {service.points.map((point) => <li>{point}</li>)}
+          </ul>
+          <p>Call <a href={`tel:${company.phoneTel}`}>{company.phoneDisplay}</a>.</p>
+          <h2>Other services</h2>
+          <ul class="list">
+            {others.map((item) => (
+              <li><a href={`/services/${item.slug}`}>{item.title}</a></li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>

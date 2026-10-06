@@ -1,0 +1,63 @@
+---
+import Base from "../../layouts/Base.astro";
+import Crumbs from "../../components/Crumbs.astro";
+import { services } from "../../data/services";
+import { breadcrumbSchema, businessSchema, graph } from "../../lib/schema";
+
+const path = "/services";
+const title = "Electrical services in Bedford";
+const description =
+  "Electrotech offers home electrics, rewires, EICR checks, shop work, farm bonding, and Niko home control in Bedford. Call 01234 325435.";
+const crumbs = [
+  { name: "Home", path: "/" },
+  { name: "Services", path },
+];
+const swatches = ["olive", "gold", "ink", "moss", "clay", "slate", "wine"];
+const jsonLd = graph([
+  businessSchema(Astro.site),
+  breadcrumbSchema(Astro.site, crumbs),
+  {
+    "@type": "ItemList",
+    name: "Electrotech services",
+    itemListElement: services.map((service, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: service.title,
+      url: new URL(`/services/${service.slug}`, Astro.site).href,
+    })),
+  },
+]);
+---
+
+<Base title={title} description={description} path={path} jsonLd={jsonLd}>
+  <section class="page-hero">
+    <div class="wrap">
+      <Crumbs items={crumbs} />
+      <p class="eyebrow">Services</p>
+      <h1>Electrical work we have offered</h1>
+      <p>
+        The list below is taken from Electrotech’s own service pages: homes, shops, farms, checks,
+        rewires, home control, and help lining up other trades. If your job is not here, call and ask.
+      </p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap cards">
+      {services.map((service, index) => (
+        <article class="card">
+          <div class={`swatch ${swatches[index % swatches.length]}`}>
+            <strong>{service.nav}</strong>
+          </div>
+          <div class="card-body">
+            <h2>{service.title}</h2>
+            <p>{service.lead}</p>
+            <ul class="list">
+              {service.points.map((point) => <li>{point}</li>)}
+            </ul>
+            <a href={`/services/${service.slug}`}>Details for {service.nav.toLowerCase()}</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>

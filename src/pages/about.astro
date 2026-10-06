@@ -1,0 +1,87 @@
+---
+import Base from "../layouts/Base.astro";
+import Crumbs from "../components/Crumbs.astro";
+import { company, fullAddress, nap } from "../data/company";
+import { breadcrumbSchema, businessSchema, graph } from "../lib/schema";
+
+const path = "/about";
+const title = "About us";
+const description =
+  "Electrotech Electrical Services is a Bedford electrician at 5 Miller Road, MK42 9FS. Customers name Stuart. Call 01234 325435.";
+const crumbs = [
+  { name: "Home", path: "/" },
+  { name: "About", path },
+];
+const jsonLd = graph([
+  businessSchema(Astro.site),
+  breadcrumbSchema(Astro.site, crumbs),
+  {
+    "@type": "AboutPage",
+    name: title,
+    url: new URL(path, Astro.site).href,
+    description,
+    about: { "@id": new URL("/#business", Astro.site).href },
+  },
+]);
+---
+
+<Base title={title} description={description} path={path} jsonLd={jsonLd}>
+  <section class="page-hero">
+    <div class="wrap">
+      <Crumbs items={crumbs} />
+      <p class="eyebrow">About us</p>
+      <h1>A Bedford electrician, based on Miller Road</h1>
+      <p>
+        {company.legalName} is listed at {fullAddress()}. The phone number on that Google listing is {company.phoneDisplay}.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <p>
+        Customers who have written about the work name Stuart as the electrician they dealt with.
+        DK Brawn’s Google review, Andy Christoforou, Shelly Martin-Smith, Robert Harris, John Parrott,
+        and Alan Crompton all use that name. We have not published a surname.
+      </p>
+      <p>
+        Electrotech has described itself as a firm that stands on the standard of the work and on how customers
+        are treated. The published line is that a new build, a rewire, and a single light or socket should all
+        get the same care.
+      </p>
+      <p>
+        Finished work is said to come with a certificate to BS 7671, the British Standard for electrical
+        installations. For home work that must meet Part P of the Building Regulations, Electrotech has said
+        a building notice is sent within 30 days. Keep that paper. Solicitors ask for it when a house is sold.
+      </p>
+
+      <h2>What an older website said about registration</h2>
+      <div class="note">
+        <p>
+          Electrotech’s website, in pages saved from 2010 and 2014, said the firm was an NICEIC domestic
+          installer and an NICEIC approved contractor. It also said the firm held City &amp; Guilds qualifications,
+          public liability insurance of £2 million, TrustMark, and membership of the Bedford Borough Trading
+          Standards approved scheme.
+        </p>
+        <p>
+          The Google listing checked on {company.checkedOn} does not show those badges, and it is not a claimed
+          listing. Ask for current proof of insurance, and for any registration your insurer or your buyer’s
+          solicitor wants to see, before work starts.
+        </p>
+      </div>
+
+      <h2>Addresses we have published</h2>
+      <p>
+        The live Google listing is {nap}. An earlier Electrotech website also gave
+        {company.earlierStreet}, {company.earlierLocality}, {company.earlierPostcode}, with the phone
+        01234 743979. Use {company.phoneDisplay}, which is the number on the current listing.
+      </p>
+      <p>
+        The Google profile has no opening hours and no website link. It has one review and no work photos.
+        The photo control opens a street view near Miller Road. That picture shows neighbouring houses, so
+        it is not reprinted here. The map on the contact page is the listing itself.
+      </p>
+      <p><a href="/contact">Contact Electrotech</a> or <a href="/reviews">read the reviews</a>.</p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,72 @@
+---
+import { company } from "../data/company";
+import { services } from "../data/services";
+
+interface Props {
+  path: string;
+}
+
+const { path } = Astro.props;
+---
+
+<header class="site-header">
+  <div class="wrap header-bar">
+    <a class="brand" href="/" aria-label="Electrotech, home">
+      <img src="/brand/logo.png" width="265" height="49" alt="Electrotech" />
+    </a>
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+    >
+      <span class="sr-only">Menu</span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav id="site-nav" class="nav" aria-label="Primary">
+      <a href="/" aria-current={path === "/" ? "page" : undefined}>Home</a>
+      <div class="drop">
+        <a href="/services" aria-current={path.startsWith("/services") ? "page" : undefined}>
+          Services
+        </a>
+        <div class="drop-panel">
+          <a href="/services">All services</a>
+          {services.map((service) => (
+            <a href={`/services/${service.slug}`}>{service.nav}</a>
+          ))}
+        </div>
+      </div>
+      <a href="/projects" aria-current={path === "/projects" ? "page" : undefined}>Projects</a>
+      <a href="/reviews" aria-current={path === "/reviews" ? "page" : undefined}>Reviews</a>
+      <a href="/areas" aria-current={path.startsWith("/areas") ? "page" : undefined}>Areas</a>
+      <a href="/about" aria-current={path === "/about" ? "page" : undefined}>About</a>
+      <a href="/contact" aria-current={path === "/contact" ? "page" : undefined}>Contact</a>
+    </nav>
+    <div class="header-actions">
+      <a class="phone-pill" href={`tel:${company.phoneTel}`}>
+        <svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16">
+          <path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 7a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1L6.6 10.8z"/>
+        </svg>
+        {company.phoneDisplay}
+      </a>
+      <a class="btn btn-gold" href="/contact">Get a quote</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const button = document.querySelector(".nav-toggle");
+  const nav = document.querySelector("#site-nav");
+  button?.addEventListener("click", () => {
+    const open = nav?.classList.toggle("is-open");
+    button.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  nav?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      nav.classList.remove("is-open");
+      button?.setAttribute("aria-expanded", "false");
+    });
+  });
+</script>

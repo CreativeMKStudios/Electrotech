@@ -1,0 +1,18 @@
+{
+  "name": "Electrotech Electrical Services",
+  "short_name": "Electrotech",
+  "description": "Electrician at 5 Miller Road, Bedford.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f1ec",
+  "theme_color": "#1b1916",
+  "lang": "en-GB",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

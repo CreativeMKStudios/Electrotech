@@ -1,0 +1,52 @@
+---
+import { company, nap } from "../data/company";
+import { services } from "../data/services";
+import { areas } from "../data/areas";
+---
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <span class="logo-chip"><img src="/brand/logo.png" width="200" height="37" alt="" /></span>
+      <p class="footer-name">{company.legalName}</p>
+      <p>{nap}</p>
+      <p><a href={`tel:${company.phoneTel}`}>{company.phoneDisplay}</a></p>
+      <p>
+        <a href={company.mapsUrl} rel="noopener">Google listing</a>
+      </p>
+    </div>
+    <div>
+      <h2>Pages</h2>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/reviews">Reviews</a></li>
+        <li><a href="/areas">Areas</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Services</h2>
+      <ul>
+        {services.map((service) => (
+          <li><a href={`/services/${service.slug}`}>{service.nav}</a></li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <h2>Areas</h2>
+      <ul>
+        {areas.map((area) => (
+          <li><a href={`/areas/${area.slug}`}>{area.name}</a></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-base">
+    <p>© {new Date().getFullYear()} {company.legalName}. {nap}. {company.phoneDisplay}.</p>
+    <p>Google rating {company.googleRating}.0 from {company.googleReviewCount} review, dated {company.googleReviewDate}.</p>
+  </div>
+</footer>

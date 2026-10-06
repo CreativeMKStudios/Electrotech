@@ -1,0 +1,218 @@
+---
+import Base from "../layouts/Base.astro";
+import { company, nap } from "../data/company";
+import { services } from "../data/services";
+import { reviews } from "../data/reviews";
+import { areas } from "../data/areas";
+import { faqs } from "../data/faqs";
+import { businessId, businessSchema, faqSchema, graph } from "../lib/schema";
+
+const path = "/";
+const title = "Electrotech | Electrician in Bedford";
+const description =
+  "Electrotech is an electrician at 5 Miller Road, Bedford, MK42 9FS. Call 01234 325435 for lights, rewires, checks, and home control.";
+
+const homeReviews = [reviews[0], reviews[1], reviews[2]];
+const swatches = ["olive", "gold", "ink", "moss", "clay", "slate", "wine"];
+
+const jsonLd = graph([
+  businessSchema(Astro.site),
+  {
+    "@type": "WebSite",
+    "@id": new URL("/#website", Astro.site).href,
+    url: new URL("/", Astro.site).href,
+    name: company.legalName,
+    publisher: { "@id": businessId(Astro.site) },
+    inLanguage: "en-GB",
+  },
+  faqSchema(faqs),
+]);
+---
+
+<Base title={title} description={description} path={path} jsonLd={jsonLd}>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow" style="color:#e6c97a">Bedford electrician</p>
+        <h1>Bedford electrician for homes, shops, and farms</h1>
+        <p>
+          Electrotech is based at {nap}. We change lights and sockets, rewire houses,
+          wire extensions, and carry out electrical checks. Call {company.phoneDisplay} and ask for a written quote.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-light" href="/contact">Get a free quote</a>
+          <a class="btn btn-ghost" href={`tel:${company.phoneTel}`}>{company.phoneDisplay}</a>
+        </div>
+        <ul class="ticks">
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e6c97a" d="M12 2a10 10 0 1 0 .01 20.01A10 10 0 0 0 12 2zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.6-4.6 1.4 1.4-6 6z"/></svg>
+            Quotes in writing before work starts
+          </li>
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e6c97a" d="M12 2a10 10 0 1 0 .01 20.01A10 10 0 0 0 12 2zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.6-4.6 1.4 1.4-6 6z"/></svg>
+            Certificates to BS 7671
+          </li>
+        </ul>
+        <p class="rating-line">
+          <span class="stars" aria-label="5 out of 5">★★★★★</span>
+          <span>Rated {company.googleRating}.0 on Google, from {company.googleReviewCount} review</span>
+        </p>
+      </div>
+      <aside class="hero-card">
+        <strong>{company.legalName}</strong>
+        <p>{nap}<br /><a href={`tel:${company.phoneTel}`}>{company.phoneDisplay}</a></p>
+        <p>Plus code {company.plusCode}, Bedford.</p>
+        <p>One Google review, scored {company.googleRating}.0, from {company.googleReviewDate}.</p>
+        <a class="btn btn-gold" href={company.mapsUrl} rel="noopener">Open the Google listing</a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap center">
+      <p class="lede">
+        Electrotech Electrical Services is a Bedford electrician. Customers who have written about the work
+        name Stuart as the person who came to the house. They talk about tidy work, plain explanations, and
+        jobs finished when agreed. We cover homes, shops, and farms, including a single fitting or a full rewire.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap panel split">
+      <div class="portrait">
+        <p class="eyebrow">Miller Road</p>
+        <strong>5 Miller Road</strong>
+        <span>Cauldwell, south Bedford, {company.postcode}</span>
+        <span>Customers name Stuart as the electrician on the job.</span>
+      </div>
+      <div>
+        <p class="eyebrow">Who we are</p>
+        <h2>Electrical work explained in plain words</h2>
+        <p>
+          A safe installation is more than a switch that works today. It is cable, earthing, and a fuse board
+          that suit the house, with a certificate you can keep.
+        </p>
+        <p>
+          We can help with a new build, a rewire, or one light or socket. Electrotech has said each of those
+          gets the same care. For home work that Building Regulations cover, a building notice is sent to you
+          within 30 days. You may need that paper when you sell.
+        </p>
+        <p>
+          <a href="/about">Read about Electrotech</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow">What we do</p>
+      <h2>Our electrical work</h2>
+      <div class="cards">
+        {services.map((service, index) => (
+          <article class="card">
+            <div class={`swatch ${swatches[index % swatches.length]}`}>
+              <strong>{service.nav}</strong>
+            </div>
+            <div class="card-body">
+              <h3>{service.title}</h3>
+              <p>{service.summary}</p>
+              <a href={`/services/${service.slug}`}>Read about {service.nav.toLowerCase()}</a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow">Why people call</p>
+      <h2>What you can expect</h2>
+      <div class="why">
+        <article>
+          <h3>A written quote</h3>
+          <p>We have said quotes are free and in writing, before any work starts. You can read it and say no.</p>
+        </article>
+        <article>
+          <h3>Plain explanations</h3>
+          <p>Mr and Mrs Barnwell wrote that the work was explained in a way they could follow. Alan Crompton wrote the same, in “simple English”.</p>
+        </article>
+        <article>
+          <h3>Tidy work</h3>
+          <p>DK Brawn’s Google review calls Stuart clean and tidy. John Parrott wrote that two lights were fitted and no mess was left.</p>
+        </article>
+        <article>
+          <h3>A local base</h3>
+          <p>The listing is {company.street}, {company.locality}. Call if you are in a nearby town and we will say if we can take the job.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow">Reviews</p>
+      <h2>What customers have said</h2>
+      <div class="quotes">
+        {homeReviews.map((review) => (
+          <figure class="quote">
+            {review.stars && <p class="stars" aria-label={`${review.stars} out of 5`}>★★★★★</p>}
+            <p>“{review.quote}”</p>
+            <footer>
+              <cite>{review.name}</cite><br />
+              {review.source}{review.date ? `, ${review.date}` : ""}
+            </footer>
+          </figure>
+        ))}
+      </div>
+      <p><a href="/reviews">Read all {reviews.length} comments</a></p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow">Local work</p>
+      <h2>Towns around Bedford</h2>
+      <div class="cards">
+        {areas.map((area) => (
+          <article class="card">
+            <div class="card-body">
+              <h3>{area.name}</h3>
+              <p>{area.distance} {area.homes}</p>
+              <a href={`/areas/${area.slug}`}>Electrician for {area.name}</a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section faq" style="padding-top:0">
+    <div class="wrap prose">
+      <h2>Questions people ask</h2>
+      {faqs.map((item) => (
+        <details>
+          <summary>{item.question}</summary>
+          <p>{item.answer}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="band">
+        <div>
+          <h2>Ready to book a visit?</h2>
+          <p>Call {company.phoneDisplay}, or use the quote page to write down the job before you ring.</p>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-gold" href="/contact">Get a free quote</a>
+          <a class="btn btn-ghost" href={`tel:${company.phoneTel}`}>{company.phoneDisplay}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
