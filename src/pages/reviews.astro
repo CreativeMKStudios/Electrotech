@@ -1,0 +1,74 @@
+---
+import Base from "../layouts/Base.astro";
+import Crumbs from "../components/Crumbs.astro";
+import { reviews } from "../data/reviews";
+import { company } from "../data/company";
+import { breadcrumbSchema, businessSchema, graph } from "../lib/schema";
+
+const path = "/reviews";
+const title = "Customer reviews";
+const description =
+  "The Google review for Electrotech in Bedford, plus customer comments the firm published on its own website. Call 01234 325435.";
+const crumbs = [
+  { name: "Home", path: "/" },
+  { name: "Reviews", path },
+];
+const google = reviews.filter((review) => review.source === "Google");
+const site = reviews.filter((review) => review.source === "Electrotech website");
+const jsonLd = graph([
+  businessSchema(Astro.site),
+  breadcrumbSchema(Astro.site, crumbs),
+]);
+---
+
+<Base title={title} description={description} path={path} jsonLd={jsonLd}>
+  <section class="page-hero">
+    <div class="wrap">
+      <Crumbs items={crumbs} />
+      <p class="eyebrow">Reviews</p>
+      <h1>What people wrote about the work</h1>
+      <p>
+        The Google listing shows {company.googleRating}.0 from {company.googleReviewCount} review.
+        The other comments were published by Electrotech on its website. They are not extra Google reviews,
+        and this page does not turn them into a star rating.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>On Google</h2>
+      <div class="quotes">
+        {google.map((review) => (
+          <figure class="quote">
+            <p class="stars" aria-label="5 out of 5">★★★★★</p>
+            <p>“{review.quote}”</p>
+            <footer>
+              <cite>{review.name}</cite><br />
+              Google review, {review.date}<br />
+              <a href={company.mapsUrl} rel="noopener">View the listing</a>
+            </footer>
+          </figure>
+        ))}
+      </div>
+
+      <h2 style="margin-top:2rem">Comments published on Electrotech’s website</h2>
+      <p>
+        Names and spellings are kept as they were published. Some lines were written in a hurry.
+        We have not rewritten them.
+      </p>
+      <div class="quotes">
+        {site.map((review) => (
+          <figure class="quote">
+            <p>“{review.quote}”</p>
+            <footer>
+              <cite>{review.name}</cite><br />
+              {review.source}
+              {review.note ? <><br />{review.note}</> : null}
+            </footer>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

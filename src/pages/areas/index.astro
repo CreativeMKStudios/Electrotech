@@ -1,0 +1,48 @@
+---
+import Base from "../../layouts/Base.astro";
+import Crumbs from "../../components/Crumbs.astro";
+import { areas } from "../../data/areas";
+import { company, nap } from "../../data/company";
+import { breadcrumbSchema, businessSchema, graph } from "../../lib/schema";
+
+const path = "/areas";
+const title = "Areas around Bedford";
+const description =
+  "Electrotech is based at 5 Miller Road, Bedford. Nearby towns include Kempston, Shortstown, Wixams, Ampthill, and Flitwick. Call 01234 325435.";
+const crumbs = [
+  { name: "Home", path: "/" },
+  { name: "Areas", path },
+];
+const jsonLd = graph([
+  businessSchema(Astro.site),
+  breadcrumbSchema(Astro.site, crumbs),
+]);
+---
+
+<Base title={title} description={description} path={path} jsonLd={jsonLd}>
+  <section class="page-hero">
+    <div class="wrap">
+      <Crumbs items={crumbs} />
+      <p class="eyebrow">Areas</p>
+      <h1>Where Electrotech is based, and the towns nearby</h1>
+      <p>
+        The workshop address on Google is {nap}. We have not drawn a hard boundary on a map.
+        If the drive is too far for the day you need, we will say so when you call {company.phoneDisplay}.
+      </p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap cards">
+      {areas.map((area) => (
+        <article class="card">
+          <div class="card-body">
+            <h2>{area.name}</h2>
+            <p>{area.distance}</p>
+            <p>{area.homes}</p>
+            <a href={`/areas/${area.slug}`}>{area.title}</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>

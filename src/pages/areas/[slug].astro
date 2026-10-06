@@ -1,0 +1,68 @@
+---
+import Base from "../../layouts/Base.astro";
+import Crumbs from "../../components/Crumbs.astro";
+import { areas, getArea } from "../../data/areas";
+import { services } from "../../data/services";
+import { company } from "../../data/company";
+import { breadcrumbSchema, businessId, businessSchema, graph } from "../../lib/schema";
+
+export function getStaticPaths() {
+  return areas.map((area) => ({
+    params: { slug: area.slug },
+    props: { area },
+  }));
+}
+
+const { area } = Astro.props;
+if (!getArea(area.slug)) {
+  throw new Error("Missing area");
+}
+const path = `/areas/${area.slug}`;
+const crumbs = [
+  { name: "Home", path: "/" },
+  { name: "Areas", path: "/areas" },
+  { name: area.name, path },
+];
+const jsonLd = graph([
+  businessSchema(Astro.site),
+  breadcrumbSchema(Astro.site, crumbs),
+  {
+    "@type": "Service",
+    name: area.title,
+    description: area.description,
+    url: new URL(path, Astro.site).href,
+    provider: { "@id": businessId(Astro.site) },
+    areaServed: {
+      "@type": "City",
+      name: area.name,
+    },
+  },
+]);
+---
+
+<Base title={area.title} description={area.description} path={path} jsonLd={jsonLd}>
+  <section class="page-hero">
+    <div class="wrap">
+      <Crumbs items={crumbs} />
+      <p class="eyebrow">{area.distance}</p>
+      <h1>{area.title}</h1>
+      <p>{area.homes}</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap prose">
+      {area.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      <p>
+        The phone number is <a href={`tel:${company.phoneTel}`}>{company.phoneDisplay}</a>.
+        The base is {company.street}, {company.locality}, {company.postcode}.
+      </p>
+      <h2>Work you can ask about</h2>
+      <ul class="list">
+        {services.map((service) => (
+          <li><a href={`/services/${service.slug}`}>{service.title}</a></li>
+        ))}
+      </ul>
+      <p><a class="btn btn-gold" href="/contact">Get a quote</a></p>
+    </div>
+  </section>
+</Base>

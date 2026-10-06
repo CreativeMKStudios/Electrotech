@@ -1,0 +1,161 @@
+---
+import Base from "../layouts/Base.astro";
+import Crumbs from "../components/Crumbs.astro";
+import { company, fullAddress, nap } from "../data/company";
+import { services } from "../data/services";
+import { breadcrumbSchema, businessSchema, graph } from "../lib/schema";
+
+const path = "/contact";
+const title = "Contact us";
+const description =
+  "Call Electrotech on 01234 325435. The address is 5 Miller Road, Bedford, MK42 9FS. Write your job down, then ring for a quote.";
+const crumbs = [
+  { name: "Home", path: "/" },
+  { name: "Contact", path },
+];
+const jsonLd = graph([
+  businessSchema(Astro.site),
+  breadcrumbSchema(Astro.site, crumbs),
+  {
+    "@type": "ContactPage",
+    name: title,
+    url: new URL(path, Astro.site).href,
+    description,
+  },
+]);
+---
+
+<Base title={title} description={description} path={path} jsonLd={jsonLd}>
+  <section class="page-hero">
+    <div class="wrap">
+      <Crumbs items={crumbs} />
+      <p class="eyebrow">Contact</p>
+      <h1>Call {company.phoneDisplay}</h1>
+      <p>
+        That is the number on the Google listing. The address is {fullAddress()}.
+        The listing has no email address and no opening hours, so the phone is the way to book.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split-page">
+      <div>
+        <h2>Write the job down, then ring</h2>
+        <p>
+          This form stays on your phone or computer. It does not send a message to us, because the
+          Google listing has no email. When you submit it, you get a note you can read out on the call.
+        </p>
+        <form id="quote-form" novalidate>
+          <label>
+            Your name
+            <input name="name" autocomplete="name" required />
+          </label>
+          <label>
+            Your phone number
+            <input name="phone" type="tel" autocomplete="tel" required />
+          </label>
+          <label>
+            Town and postcode
+            <input name="place" autocomplete="postal-code" required />
+          </label>
+          <label>
+            What you need
+            <select name="job" required>
+              <option value="">Choose one</option>
+              {services.map((service) => (
+                <option value={service.title}>{service.title}</option>
+              ))}
+              <option value="Something else">Something else</option>
+            </select>
+          </label>
+          <label>
+            When you hope to have it done
+            <input name="when" />
+          </label>
+          <label>
+            Details
+            <textarea name="details" placeholder="For example: two new kitchen lights, or a landlord check on a 1930s house."></textarea>
+          </label>
+          <p id="form-error" class="error" hidden>Add your name, phone, town, and the type of job.</p>
+          <button class="btn btn-gold" type="submit">Prepare my note</button>
+        </form>
+        <div id="quote-ready" class="ready" hidden>
+          <h2>Your note is ready</h2>
+          <p>Call us and read this out, or copy it into a text if we ask you to send one.</p>
+          <pre id="quote-text"></pre>
+          <p>
+            <a class="btn btn-gold" href={`tel:${company.phoneTel}`}>Call {company.phoneDisplay}</a>
+            <button class="btn phone-pill" id="copy-note" type="button">Copy note</button>
+          </p>
+          <p id="copy-status" role="status"></p>
+        </div>
+      </div>
+      <div>
+        <h2>Visit details</h2>
+        <p>
+          <strong>{company.legalName}</strong><br />
+          {nap}<br />
+          {company.region}<br />
+          Plus code {company.plusCode}
+        </p>
+        <p><a href={`tel:${company.phoneTel}`}>{company.phoneDisplay}</a></p>
+        <p><a href={company.mapsUrl} rel="noopener">Open the Google listing</a></p>
+        <iframe
+          class="map-frame"
+          title="Map of Electrotech at 5 Miller Road, Bedford"
+          src={company.mapsEmbed}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const form = document.querySelector("#quote-form");
+  const ready = document.querySelector("#quote-ready");
+  const text = document.querySelector("#quote-text");
+  const error = document.querySelector("#form-error");
+  const copy = document.querySelector("#copy-note");
+  const status = document.querySelector("#copy-status");
+
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!(form instanceof HTMLFormElement)) return;
+    const data = new FormData(form);
+    const name = String(data.get("name") || "").trim();
+    const phone = String(data.get("phone") || "").trim();
+    const place = String(data.get("place") || "").trim();
+    const job = String(data.get("job") || "").trim();
+    const when = String(data.get("when") || "").trim();
+    const details = String(data.get("details") || "").trim();
+    if (!name || !phone || !place || !job) {
+      error?.removeAttribute("hidden");
+      return;
+    }
+    error?.setAttribute("hidden", "");
+    const lines = [
+      `Name: ${name}`,
+      `Phone: ${phone}`,
+      `Place: ${place}`,
+      `Job: ${job}`,
+      when ? `When: ${when}` : "",
+      details ? `Details: ${details}` : "",
+    ].filter(Boolean);
+    if (text) text.textContent = lines.join("\n");
+    ready?.removeAttribute("hidden");
+    ready?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  copy?.addEventListener("click", async () => {
+    const value = text?.textContent || "";
+    try {
+      await navigator.clipboard.writeText(value);
+      if (status) status.textContent = "Copied.";
+    } catch {
+      if (status) status.textContent = "Select the note and copy it by hand.";
+    }
+  });
+</script>

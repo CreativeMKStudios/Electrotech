@@ -1,0 +1,53 @@
+---
+import Base from "../layouts/Base.astro";
+import Crumbs from "../components/Crumbs.astro";
+import { company } from "../data/company";
+import { breadcrumbSchema, businessSchema, graph } from "../lib/schema";
+
+const path = "/privacy";
+const title = "Privacy";
+const description =
+  "How the Electrotech website handles information. The quote form stays on your device and is not sent to a server.";
+const crumbs = [
+  { name: "Home", path: "/" },
+  { name: "Privacy", path },
+];
+const jsonLd = graph([
+  businessSchema(Astro.site),
+  breadcrumbSchema(Astro.site, crumbs),
+]);
+---
+
+<Base title={title} description={description} path={path} jsonLd={jsonLd}>
+  <section class="page-hero">
+    <div class="wrap prose">
+      <Crumbs items={crumbs} />
+      <h1>Privacy</h1>
+      <p>
+        This website is for {company.legalName}, {company.street}, {company.locality}, {company.postcode}.
+        The phone number is {company.phoneDisplay}.
+      </p>
+      <h2>The quote form</h2>
+      <p>
+        The form on the contact page runs in your browser. It does not send your name, phone number, or
+        job details to us or to any other server. Nothing from that form is stored by this website.
+        If you then call us, we will hear whatever you choose to say.
+      </p>
+      <h2>Maps</h2>
+      <p>
+        The contact page embeds a Google map of the Miller Road address. Google may set its own cookies
+        when that map loads. Their policy is on Google’s own site.
+      </p>
+      <h2>Calls</h2>
+      <p>
+        If you phone {company.phoneDisplay}, that call is between you and Electrotech. This website does
+        not record it.
+      </p>
+      <h2>Pages and links</h2>
+      <p>
+        Customer comments on this site are words Electrotech had already published, or the single review
+        on its Google listing. We do not add new personal details.
+      </p>
+    </div>
+  </section>
+</Base>
