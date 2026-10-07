@@ -11,6 +11,7 @@ export default defineConfig({
   compressHTML: true,
   prefetch: true,
   build: {
+    format: "file",
     inlineStylesheets: "auto",
   },
   integrations: [
