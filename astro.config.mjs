@@ -10,13 +10,24 @@ export default defineConfig({
   trailingSlash: "never",
   compressHTML: true,
   prefetch: true,
+  redirects: {
+    "/about-us": "/about",
+    "/aboutus": "/about",
+    "/contact-us": "/contact",
+    "/contactus": "/contact",
+    "/quote": "/contact",
+    "/get-a-quote": "/contact",
+    "/home": "/",
+    "/gallery": "/projects",
+    "/testimonials": "/reviews",
+  },
   build: {
     format: "file",
     inlineStylesheets: "auto",
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes("/404"),
+      filter: (page) => !page.includes("/404") && !page.endsWith("/200"),
     }),
   ],
 });
